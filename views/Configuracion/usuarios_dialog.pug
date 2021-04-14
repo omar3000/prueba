@@ -1,0 +1,70 @@
+div#SecondaryWindowUsuarios(style='display: none;')
+  .row
+    .col.s12.m6.l6.valign-wrapper
+      i.material-icons.left group
+      h5#TituloUsuarios
+    .col.s12.m6.l6.right-align
+      button#RegresarUsuarios.btn.grey
+        i.material-icons.left arrow_back
+        | REGRESAR
+  .row
+    form.col.s12(autocomplete='off')
+      h6 Registra o edita la información del usuario.
+      br
+      .input-field.col.s12.m6.l4
+        | Nombre *
+        input#NombreUsuarios(type="text")
+        span#Info.helper-text
+      .input-field.col.s12.m6.l4
+        | Perfil *
+        #PerfilUsuarios
+        span#Info.helper-text
+          | Asigna un perfil al usuario 
+      .input-field.col.s12.m6.l4
+        | Teléfono 
+        input#TelefonoUsuarios(type="text")
+        span#Info.helper-text
+      .input-field.col.s12.m6.l4
+        | Correo *
+        input#CorreoUsuarios(type="text")
+      .input-field.col.s12.m6.l4
+        | Cuenta *
+        input#CuentaUsuarios(type="text")
+        span#Info.helper-text
+          | Este es tu usuario para entrar al sistema
+      
+        
+      div#esconder
+        .input-field.col.s12.m6.l4
+          | Contrase&ntilde;a *
+          input#PassUsuarios(type="password")
+        .input-field.col.s12.m6.l4
+          | Confirmar Contrase&ntilde;a *
+          input#PassUsuariosConfirmacion(type="password")
+        
+  .row
+    button#CambiarPassword.btn.grey(style='margin-right: 10px;')
+      i.material-icons.left lock
+      | Cambiar contraseña
+    button#SaveUsuarios.btn.indigo.accent-4(style='margin-right: 10px;')
+      i.material-icons.left done
+      | ACEPTAR
+    button#CancelUsuarios.btn.grey
+      i.material-icons.left cancel
+      | CANCELAR
+  #passwordModal.modal
+      .modal-content
+          // Modal Header
+          h4 Cambiar Contraseña
+          
+          label(for="NewPassword") Nueva contraseña
+          input#NewPassword(type="password" name="NewPassword" value="")
+          label(for="Confirmacion") Confirmación
+          input#Confirmacion(type="password" name="Confirmacion" value="")
+
+      // Modal footer
+      .modal-footer
+          button#AceptarCambio.btn.indigo.accent-4(type='button') Confirmar 
+          a(href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat")
+            | Cerrar
+  

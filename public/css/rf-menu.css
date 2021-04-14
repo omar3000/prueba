@@ -1,0 +1,11 @@
+.rf-menu-color {
+  background-color:#6B2A6C !important;
+}
+
+.sidenav-overlay{
+    z-index: 9999 !important; 
+}
+
+#slide-out {
+    z-index: 9999999999;
+}

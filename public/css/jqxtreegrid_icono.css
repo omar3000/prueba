@@ -1,0 +1,8 @@
+.jqx-tree-grid-icon, .jqx-tree-grid-icon-size {
+    width: 20px;
+    height: 18px;
+}
+.jqx-tree-grid-title, .jqx-tree-grid-collapse-button, .jqx-tree-grid-expand-button {
+    height: 20px;
+    line-height: 20px;
+}

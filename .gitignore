@@ -1,0 +1,14 @@
+node_modules/
+.idea
+log
+.vscode/launch.json
+uploads
+public/uploadfile
+app/
+.DS_Store
+public/.DS_Store
+public/img/.DS_Store
+public/.DS_Store
+auto.sh
+auto-dev.sh
+package-lock.json

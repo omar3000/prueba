@@ -1,0 +1,39 @@
+div#SecondaryWindow(style='display: none;')
+  .row
+    .col.s12.m6.l6.valign-wrapper
+      i.material-icons.left check_circle
+      h5#Titulo
+    .col.s12.m6.l6.right-align
+      button#Regresar.btn.grey
+        i.material-icons.left arrow_back
+        | REGRESAR
+  .row
+    form.col.s12(autocomplete='off')
+      h6 Registra o edita la información del perfil.
+      br
+      .input-field.col.s12.m6.l4
+        | Perfil *
+        input#Perfil(type="text")
+  .row
+    button#Save.btn.indigo.accent-4(style='margin-right: 10px;')
+      i.material-icons.left done
+      | ACEPTAR
+    button#Cancel.btn.grey
+      i.material-icons.left cancel
+      | CANCELAR
+
+//#popupWindow(style="display: none;")
+  div#tituloPopup Perfil
+  div.divprospectos
+    form.formprospectos
+      table.tableprospectos              
+        tr        
+          td(style="padding: 20px; width: 100px;")
+            | Grupo de usuarios:
+          td(style="padding: 20px;")
+            input#Perfil(required='', name='perfil')
+      table.tablebotones
+        tr
+          td.tdbotones(align='right')            
+            input#Save(style='margin-right: 5px;', value='Aceptar')
+            input#Cancel(type='button', value='Cancelar')   

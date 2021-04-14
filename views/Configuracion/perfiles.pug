@@ -1,0 +1,27 @@
+div#MainWindow
+  div
+    i.material-icons.left group
+    h5 Perfiles
+    h6 Administra y encuentra tus perfiles y sus permisos.
+  div.row
+    div.col.s6
+      div.row
+        div.right-align.col.s12.m12.l12
+            button#Alta.btn.indigo.accent-4(style='margin-right: 10px;')
+                i.material-icons.left add
+                | AGREGAR
+            button#Cambio.btn.indigo.accent-4(style='margin-right: 10px;', disabled='')
+                i.material-icons.left edit
+                | EDITAR
+            button#Baja.btn.indigo.accent-4(disabled='')
+                i.material-icons.left delete
+                | ELIMINAR
+      div.row
+        h7 Selecciona un perfil para administrar sus permisos por perfil.
+        div#jqxgrid(style='margin-top 10px; margin-right: 10px;')
+    div.col.s6
+      br
+      br
+      br
+
+include ./perfiles_dialog

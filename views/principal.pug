@@ -1,0 +1,207 @@
+extends layout
+
+block content
+  #loader
+  header
+    div(style="margin-top: 20px; margin-left: 20px;")
+      a.sidenav-trigger(href='#', data-target='slide-out')
+        i.material-icons.black-text menu  
+    //- Contenedor de Sidebar
+    ul#slide-out.sidenav.rf-menu-color(style='width: 280px;')
+      li
+        li.opcion_menu(data-url='/perfiles/list',data-funcion='updatePagePerfiles')
+          a.white-text(href='#')
+            i.material-icons.left.white-text group
+              | Perfiles                   
+
+      li
+        li.opcion_menu(data-url='/usuarios/list',data-funcion='updatePageUsuarios')
+          a.white-text(href='#')
+            i.material-icons.left.white-text group
+              | Usuarios                   
+
+                    
+      li
+        a#salir.waves-effect.black-text(href='/logout')
+          i.material-icons.black-text power_settings_new
+          | Salir 
+
+  //- contenedor principal de aplicacion
+  .container-fluid(style="margin-left:20px; margin-right:10px;")    
+    .col-sm-12
+      #contenedor
+
+  //- contendedor de dialogos
+  #contenedor-dialogs
+
+block scripts
+  script(type='text/javascript').
+
+    const REALFIX_PAGE_SELECTED = "realfix_page_selected";
+    menufunctions = {
+    
+      'updatePagePerfiles':updatePagePerfiles,
+      'updatePageUsuarios':updatePageUsuarios,
+      
+    };
+
+
+
+    function perfilDatos(nombre){
+    //-   console.log("Entro");
+      $("#nombreUsuario").html('<i class="material-icons right">arrow_drop_down</i>'+nombre);
+    }
+    function setObjCookie(cname, json, exdays) {
+      var svalue = JSON.stringify(json);
+      localStorage.setItem(cname, svalue);
+    }
+    function getObjCookie(cname) {
+      var sobj = localStorage.getItem(cname);
+      var obj = null; 
+      if(sobj)
+        obj = JSON.parse(sobj);
+      return obj;
+    }
+    function removeObjCookie(cname) {
+      localStorage.removeItem(cname);
+    }
+    function onMenu(newid){
+      $("li[id^=menu].active").removeClass('active');
+      $("#"+newid).addClass('active');
+    }
+    function updatePage(url,funcion){
+      if(funcion == undefined)
+        return;
+      $.ajax({  
+        url: url, 
+        beforeSend: function () {
+          $('#jqxLoader').jqxLoader('open');
+        }, 
+        success: function (resp) {
+          $('#jqxLoader').jqxLoader('close');
+          if (resp.exito != null) {
+            if (resp.exito) {
+              $('#contenedor').html(resp.html);
+            } else {
+              alertify.alert("Realfix", resp.msg);
+            }
+            if (funcion){
+              //- alert(funcion);
+              if (funcion == 'updatePageSucursales')
+                funcion(resp.data, !{JSON.stringify(info_loggin)});
+              else
+                funcion(resp.data);
+            }
+            return;
+          }
+
+          $('#contenedor').html(resp);
+          if (funcion){
+            if (funcion == menufunctions['updatePageSucursales'])
+              funcion(!{JSON.stringify(info_loggin)});
+            else
+              funcion();
+          }
+        }
+      });
+    }
+
+
+
+    function clearWindows(){
+      $('#contenedor').html("");
+      $('#HIST_popupWindow').remove();
+      $('#CLIENT_popupWindow').remove();
+      $('#AUTO_popupWindow').remove();
+      $('#slide_panel').remove();
+      $('#ContenedorSlidePanel').remove();
+      $('.jqx-window').remove();
+      $('.jqx-window-modal').remove();
+      $('.jqx-widget').remove();
+      $('[id^=calendarjqxWidget]').remove();
+      $('[id^=listBox]').remove();
+      $('[id^=menuWrappergrid]').remove();
+      $('[id^=listBoxjqxWidget]').remove();
+      $('[id^=listBoxTipo]').remove();
+      $('[id^=listBoxjqx]').remove();           
+      $('[id^=listBoxT]').remove();
+    }
+
+    var onNewMenu = function(page_selected){
+      setObjCookie(REALFIX_PAGE_SELECTED, page_selected);
+      onMenu(page_selected.menu);
+
+      //Casos que requieren que el javascript lleve como función la variable de loggin
+      if (page_selected.funcion == menufunctions['updatePageSucursales']){
+        updatePage(page_selected.url,menufunctions[page_selected.funcion], info_loggin);
+        alert('entra');
+      }
+      else
+        updatePage(page_selected.url,menufunctions[page_selected.funcion]);
+    }
+
+    
+
+    function bienvenidaRealfix() {
+      $('#contenedor').html(
+        '<div align="center">' +
+          '<h2><br>Bienvenido a</h2>' +
+          '<img src="../img/logo.jpg" class="rounded float-left" width="30%" />' +
+        '</div>'
+      );
+    }
+
+    $(document).ready(function(){      
+      let sidenav = document.querySelectorAll('.sidenav');
+      let collapse = document.querySelectorAll('.collapsible');
+      let dropdown = document.querySelectorAll('.dropdown-trigger');
+      let instanceDropdown = M.Dropdown.init(dropdown);
+      let instanceSidenav = M.Sidenav.init(sidenav);
+      let instanceCollapse = M.Collapsible.init(collapse);
+      let tooltip = document.querySelectorAll('.tooltipped');
+      let instancetooltip = M.Tooltip.init(tooltip);
+
+
+
+      var page_selected = getObjCookie(REALFIX_PAGE_SELECTED);     
+      if (page_selected == null) {
+       
+        //bienvenidaRealfix();
+        page_selected = {
+          menu: 'updatePageUsuarios',
+          url: '/usuarios/list', 
+          funcion: 'updatePageUsuarios' 
+        };
+        onNewMenu(page_selected);
+      }
+      else {
+        onNewMenu(page_selected);
+      }
+      $('.opcion_menu').click(function(ev) { 
+        var funcion = $(ev.currentTarget).data('funcion'); 
+          if(funcion == "")
+            return;
+        clearWindows();
+        page_selected = {};
+        page_selected.menu = $(ev.currentTarget).attr('id');
+        page_selected.url = $(ev.currentTarget).data('url');
+        page_selected.funcion = funcion;           
+        onNewMenu(page_selected);
+      });
+
+    });
+
+    $('#salir').click(function(){
+      removeObjCookie(REALFIX_PAGE_SELECTED);
+    });
+
+    (function($) {
+      $(function() {
+        $('.dropdown-button').dropdown({
+          hover: true,
+          belowOrigin: true,
+          alignment: 'right',
+          constrainWidth: false
+        });
+      });
+    })(jQuery);

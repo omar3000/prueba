@@ -1,0 +1,27 @@
+div#MainWindowUsuarios
+  div
+    i.material-icons.left group
+    h5#encabezadoUsuarios Usuarios
+    h6 Administra y encuentra tus usuarios.
+  .row#btnsusuarios
+    .right-align.col.s12.m12.l12
+        button#AltaUsuarios.btn.indigo.accent-4(style='margin-right: 10px;')
+            i.material-icons.left add
+            | AGREGAR
+        button#CambioUsuarios.btn.indigo.accent-4(style='margin-right: 10px;', disabled='')
+            i.material-icons.left edit
+            | EDITAR
+        button#BajaUsuarios.btn.indigo.accent-4(disabled='')
+            i.material-icons.left delete
+            | ELIMINAR
+  .row
+    div#jqxgridUsuarios(style='margin-top 10px; margin-right: 10px;')
+include ./usuarios_dialog
+
+  // Modal footer
+  .modal-footer
+      button#btnEnviarCorreo.btn.indigo.accent-4(type='button') Confirmar 
+      a(href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat")
+        | Cerrar
+
+//(hidden=!info_loggin.permisos.configuracion.editar)
