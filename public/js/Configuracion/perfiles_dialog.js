@@ -9,8 +9,9 @@ function PerfilesDialog(cbAlta, cbCambio, cbCancelar){
     function datapopuptorow(cb){
       var row = {};
       getValueInput('Perfil', 'perfil', row);
+      getValueInput('Descripcion', 'descripcion', row);
       //row.perfil = $("#Perfil").val();
-      if (tieneDatos(row.perfil, 'Perfil')){
+      if (tieneDatos(row.perfil, 'Perfil') && tieneDatos(row.descripcion, 'Descripcion')  ){
         cb(row);
       }
     }
@@ -24,23 +25,8 @@ function PerfilesDialog(cbAlta, cbCambio, cbCancelar){
               success: function(data) {
                   if(data.exito){
                       alertify.success('Alta con &eacute;xito');
-                      newrow.pk = data.pk;
+                      newrow.id = data.id;
                       row_selected = newrow;
-
-                      //Insertar permisos
-                      $.ajax({  
-                        url: api.recursos,  
-                        data: { fkperfil: newrow.pk },
-                        type:'POST',
-                        success: function(data) {
-                            if(!data.exito){
-                                alertify.alert('Error no se pudieron añadir permisos', data.msg);   
-                            }  
-                        },
-                        error: function(xhr,status,error){
-                            alertify.alert('Error','Status: '+status+', Mensaje: '+error);   
-                        }        
-                      });  
                       cbAlta(row_selected);
                   }
                   else
@@ -54,9 +40,9 @@ function PerfilesDialog(cbAlta, cbCambio, cbCancelar){
     }
     function onokCambio(){
         datapopuptorow(function(rowdata){      
-            rowdata.pk = row_selected.pk;
+            rowdata.id = row_selected.id;
             $.ajax({  
-                url: api.perfiles+'/'+rowdata.pk,  
+                url: api.perfiles+'/'+rowdata.id,  
                 data: rowdata,
                 type:'PUT',
                 success: function(data) {
@@ -76,13 +62,15 @@ function PerfilesDialog(cbAlta, cbCambio, cbCancelar){
     }
     
     cargarInput('Perfil', 'Inserte Perfil', function(){
+        cargarInput('Descripcion', 'Agrega Descripcion', function(){
+        });
 
     });
 
     this.init = function(row){
         row_selected = row;
 
-        if(row_selected.pk == null){
+        if(row_selected.id == null){
             onokpopupwin = onokAlta;
             $("#Titulo").text('Alta de perfil');
         }
@@ -92,7 +80,7 @@ function PerfilesDialog(cbAlta, cbCambio, cbCancelar){
         }
 
         setValueInput('Perfil', row_selected.perfil);
-        //$("#Perfil").val(row_selected.perfil);
+        setValueInput('Descripcion', row_selected.descripcion);
         M.updateTextFields();
 
         $btnAceptar.unbind();

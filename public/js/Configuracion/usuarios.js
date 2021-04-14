@@ -12,26 +12,15 @@ function updatePageUsuarios(cbEnd) {
   var usuariosDialog = new UsuariosDialog(cbAlta, cbCambio, cbCancelar);
 
 
-  this.init = function (pkcliente) {
-    fkcliente = pkcliente;
+  this.init = function () {
+    
     $("#divPerfilUsuarios").hide();
-
-
-    var perfilDefault;
-    $("#PerfilUsuarios > option").each(function () {
-      if (this.text == 'Cliente')
-        perfilDefault = this.value;
-    });
-
-    //$('#PerfilUsuarios option:selected').text("Cliente");
-
-    $('#PerfilUsuarios').val(perfilDefault);
 
     $('#' + perfilDefault).prop('selected', true);
 
     $("#encabezadoUsuarios").text('Contactos');
     getSession().then((session) => {
-      updateGrid(session.user.fkperfil);
+      updateGrid(session.user.perfil_id);
     });
   }
 
@@ -46,14 +35,14 @@ function updatePageUsuarios(cbEnd) {
 
   function cbAlta(newrow) {
     $("#botones").show();
-    $grid.jqxGrid('addrow', newrow.pk, newrow);
+    $grid.jqxGrid('addrow', newrow.id, newrow);
     hideWindow();
   }
 
   function cbCambio(rowdata) {
     $("#botones").show();
     console.log(rowdata);
-    $grid.jqxGrid('updaterow', rowdata.pk, rowdata);
+    $grid.jqxGrid('updaterow', rowdata.id, rowdata);
     hideWindow();
   }
 
@@ -66,12 +55,12 @@ function updatePageUsuarios(cbEnd) {
     $btnAlta.click(function () {
         console.log('Entro');
         usuariosDialog.init({ 
-            pk: null, 
+            id: null, 
             nombre: '',
-            cuenta: '',
+            username: '',
             correo: '',
             pass: '',
-            fkperfil: null,
+            perfil_id: null,
             telefono: ''
         });
         setReadWindow(false);
@@ -111,15 +100,15 @@ function updatePageUsuarios(cbEnd) {
 
   function onokBorrar() {
     var rowdata = {};
-    rowdata.pk = row_selected.pk;
+    rowdata.id = row_selected.id;
     $.ajax({
-      url: api.usuarios + '/' + rowdata.pk,
+      url: api.usuarios + '/' + rowdata.id,
       data: rowdata,
       type: 'DELETE',
       success: function (data) {
         if (data.exito) {
           alertify.success('Registro eliminado');
-          $grid.jqxGrid('deleterow', rowdata.pk);
+          $grid.jqxGrid('deleterow', rowdata.id);
           $btnBaja.prop('disabled', true);
           $btnCambio.prop('disabled', true);
           return;
@@ -139,17 +128,17 @@ function updatePageUsuarios(cbEnd) {
       datatype: "json",
       data: {nombrePerfil: nombrePerfil },
       datafields: [
-        { name: 'pk', type: 'string' },
-        { name: 'fkperfil', type: 'string' },
+        { name: 'id', type: 'string' },
+        { name: 'perfil_id', type: 'string' },
         { name: 'nombre', type: 'string' },
-        { name: 'cuenta', type: 'string' },
+        { name: 'username', type: 'string' },
         { name: 'correo', type: 'string' },
         { name: 'pass', type: 'string' },
         { name: 'perfil', type: 'string' },
         { name: 'telefono', type: 'string' },
 
       ],
-      id: 'pk',
+      id: 'id',
       url: api.usuarios
     };
     var dataAdapter = new $.jqx.dataAdapter(source, {
@@ -184,18 +173,18 @@ function updatePageUsuarios(cbEnd) {
       filterable: true,
       columns: [
         { text: 'Nombre', datafield: 'nombre', minwidth: 200, width: '24%', align: 'center', cellsalign: 'left' },
-        { text: 'Usuario', datafield: 'cuenta', minwidth: 200, width: '24%', align: 'center', cellsalign: 'left' },
+        { text: 'Usuario', datafield: 'username', minwidth: 200, width: '24%', align: 'center', cellsalign: 'left' },
         { text: 'Correo', datafield: 'correo', minwidth: 200, width: '23%', align: 'center', cellsalign: 'left' },
         { text: 'Perfil', datafield: 'perfil', minwidth: 200, width: '23%', align: 'center', cellsalign: 'left' },
         {
           text: '',
-          datafield: 'pk',
+          datafield: 'id',
           minwidth: 40, width: '6%',
           filterable: false,
           cellsalign: 'right',
           align: 'center',
           createwidget: function (row, column, value, htmlElement) {
-            var id = row.bounddata.pk;
+            var id = row.bounddata.id;
             var button = $("<button id='" + id + "' class='btn-small btn-flat'><i class='material-icons'>visibility</i></button>");
             $(htmlElement).append(button);
             $('#' + id).click(function () {
@@ -252,7 +241,7 @@ function updatePageUsuarios(cbEnd) {
   initButtons(function () {
     initGrid(function () {
       getSession().then((session) => {
-        updateGrid(session.user.fkperfil);
+        updateGrid(session.user.perfil_id);
         inicializarDialogo();
       });
     });

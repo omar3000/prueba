@@ -2,7 +2,6 @@ var g_EventsManager = {};
 
 function updateGridPerfiles(nombrePerfil, cbEnd) {
     var api = {
-        recursos: "/api/recursos",
         perfiles: "/api/perfiles"
     };
     var $btnAlta = $("#Alta");
@@ -23,12 +22,12 @@ function updateGridPerfiles(nombrePerfil, cbEnd) {
     }
 
     function cbAlta(newrow) {
-        $grid.jqxGrid('addrow', newrow.pk, newrow);
+        $grid.jqxGrid('addrow', newrow.id, newrow);
         hideWindow();
     }
 
     function cbCambio(rowdata) {
-        $grid.jqxGrid('updaterow', rowdata.pk, rowdata);
+        $grid.jqxGrid('updaterow', rowdata.id, rowdata);
         hideWindow();
     }
 
@@ -37,15 +36,15 @@ function updateGridPerfiles(nombrePerfil, cbEnd) {
     }
     function onokBorrar() {
         var rowdata = {};
-        rowdata.pk = row_selected.pk;
+        rowdata.id = row_selected.id;
         $.ajax({
-            url: api.perfiles + '/' + rowdata.pk,
+            url: api.perfiles + '/' + rowdata.id,
             data: rowdata,
             type: 'DELETE',
             success: function (data) {
                 if (data.exito) {
                     alertify.success('Registro eliminado');
-                    var commit = $grid.jqxGrid('deleterow', rowdata.pk);
+                    var commit = $grid.jqxGrid('deleterow', rowdata.id);
                     $btnBaja.prop('disabled', true);
                     $btnCambio.prop('disabled', true);
                     return;
@@ -64,8 +63,9 @@ function updateGridPerfiles(nombrePerfil, cbEnd) {
         var source = {
             datatype: "json",
             datafields: [
-                { name: 'pk', type: 'string' },
-                { name: 'perfil', type: 'string' }
+                { name: 'id', type: 'string' },
+                { name: 'perfil', type: 'string' },
+                { name: 'descripcion', type: 'string' }
             ],
             addrow: function (rowid, rowdata, position, commit) {
                 commit(true);
@@ -76,7 +76,7 @@ function updateGridPerfiles(nombrePerfil, cbEnd) {
             deleterow: function (rowid, commit) {
                 commit(true);
             },
-            id: 'pk',
+            id: 'id',
             data: { nombrePerfil: nombrePerfil },
             url: api.perfiles
         };
@@ -109,8 +109,9 @@ function updateGridPerfiles(nombrePerfil, cbEnd) {
     function initButtons(cb) {
         $btnAlta.click(function () {
             perfilesDialog.init({
-                pk: null,
-                perfil: ''
+                id: null,
+                perfil: '',
+                descripcion: ''
             });
             setReadWindow(false);
             showWindow();
@@ -152,16 +153,17 @@ function updateGridPerfiles(nombrePerfil, cbEnd) {
             filterable: true,
             showfilterrow: true,
             columns: [
-                { text: 'Grupo de usuarios', datafield: 'perfil', align: 'center', cellsalign: 'left', width: '90%', },
+                { text: 'Grupo de usuarios', datafield: 'perfil', align: 'center', cellsalign: 'left', width: '50%', },
+                { text: 'Descripcion', datafield: 'descripcion', align: 'center', cellsalign: 'left', width: '40%', },
                 {
                     text: '',
-                    datafield: 'pk',
+                    datafield: 'id',
                     width: '10%',
                     filterable: false,
                     cellsalign: 'right',
                     align: 'center',
                     createwidget: function (row, column, value, htmlElement) {
-                        var id = row.bounddata.pk;
+                        var id = row.bounddata.id;
                         var button = $("<button id='" + id + "' class='btn-small btn-flat'><i class='material-icons'>visibility</i></button>");
                         $(htmlElement).append(button);
                         $('#' + id).click(function () {
@@ -178,11 +180,7 @@ function updateGridPerfiles(nombrePerfil, cbEnd) {
 
         $grid.jqxGrid('localizestrings', localizationobj);
         $grid.bind('bindingcomplete', function (event) {
-            /*if(g_pkcliente_seguimiento != null){
-                var numBoundIndex = $grid.jqxGrid('getrowboundindexbyid', g_pkcliente_seguimiento);
-                $grid.jqxGrid('selectrow', numBoundIndex);
-                $grid.jqxGrid('ensurerowvisible', numBoundIndex);
-            }       */
+           
         });
         $grid.on('rowselect', function (event) {
             index_selected = event.args.rowindex;
@@ -202,7 +200,7 @@ function updateGridPerfiles(nombrePerfil, cbEnd) {
 }
 function updatePagePerfiles() {
     getSession().then((session) => {
-        updateGridPerfiles(session.user.fkperfil, function () {
+        updateGridPerfiles(session.user.perfil_id, function () {
         });
     });
 }

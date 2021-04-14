@@ -22,17 +22,17 @@ function UsuariosDialog(cbAlta, cbCambio, cbCancelar) {
 
     getValueInput('NombreUsuarios', 'nombre', row);
     getValueInput('CorreoUsuarios', 'correo', row);
-    getValueInput('CuentaUsuarios', 'cuenta', row);
+    getValueInput('CuentaUsuarios', 'username', row);
     getValueInput('TelefonoUsuarios', 'telefono', row);
     getValueInput('PassUsuariosConfirmacion', 'passConfirmacion', row);
     getValueInput('PassUsuarios', 'pass', row);
-    getValueComboBox('PerfilUsuarios', 'fkperfil', 'perfil', row);
+    getValueComboBox('PerfilUsuarios', 'perfil_id', 'perfil', row);
 
     
 
-    if (tieneDatos(row.nombre, 'NombreUsuarios') && tieneDatos(row.fkperfil, 'Perfil')
+    if (tieneDatos(row.nombre, 'NombreUsuarios') && tieneDatos(row.perfil_id, 'Perfil')
       && tieneDatos(row.correo, 'Correo') && esCorreo(row.correo, 'Correo')
-      && tieneDatos(row.cuenta, 'Cuenta') && tieneDatos(row.pass, 'Contraseña')
+      && tieneDatos(row.username, 'Username') && tieneDatos(row.pass, 'Contraseña')
       //&& esPassword(row.pass, 'Contraseña') 
       ) {
 
@@ -84,7 +84,7 @@ function UsuariosDialog(cbAlta, cbCambio, cbCancelar) {
           success: function (data) {
             if (data.exito) {
               alertify.success('Alta con &eacute;xito');
-              newrow.pk = data.pk;
+              newrow.id = data.id;
               row_selected = newrow;
               //Regresar el valor cliente a formato JSON
               cbAlta(row_selected);
@@ -103,10 +103,10 @@ function UsuariosDialog(cbAlta, cbCambio, cbCancelar) {
   function onokCambio() {
     datapopuptorow(function (rowdata) {
 
-      rowdata.pk = row_selected.pk;
+      rowdata.id = row_selected.id;
     
       $.ajax({
-        url: api.usuarios + '/' + rowdata.pk,
+        url: api.usuarios + '/' + rowdata.id,
         data: rowdata,
         type: 'PUT',
         success: function (data) {
@@ -132,7 +132,7 @@ function UsuariosDialog(cbAlta, cbCambio, cbCancelar) {
           cargarInput('TelefonoUsuarios', 'Teléfono de usuario', function () {
             cargarInput('PassUsuarios', 'Password de usuario', function () {
               cargarInput('PassUsuariosConfirmacion', 'Password de usuario', function () {
-                cargarComboBox('PerfilUsuarios', api.perfiles, 'perfil', 'pk', function () {
+                cargarComboBox('PerfilUsuarios', api.perfiles, 'perfil', 'id', function () {
                 
                                           
                     
@@ -151,7 +151,7 @@ function UsuariosDialog(cbAlta, cbCambio, cbCancelar) {
   this.init = function (row) {
     row_selected = row;
 
-    if (row_selected.pk == null) {
+    if (row_selected.id == null) {
       onokpopupwin = onokAlta;
       $("#TituloUsuarios").text('Alta de usuario');
       $("#esconder").show();
@@ -172,12 +172,12 @@ function UsuariosDialog(cbAlta, cbCambio, cbCancelar) {
     setValueInput('NombreUsuarios', row_selected.nombre);
 
     setValueInput('CorreoUsuarios', row_selected.correo);
-    setValueInput('CuentaUsuarios', row_selected.cuenta);
+    setValueInput('CuentaUsuarios', row_selected.username);
     setValueInput('TelefonoUsuarios', row_selected.telefono);
     setValueInput('PassUsuarios', row_selected.pass);
     setValueInput('PassUsuariosConfirmacion', row_selected.passConfirmacion);
     
-    setSelectItemComboBox('PerfilUsuarios', row_selected.fkperfil);
+    setSelectItemComboBox('PerfilUsuarios', row_selected.perfil_id);
 
     
     M.updateTextFields();

@@ -7,16 +7,16 @@ function get_infologinDefault() {
   var login = {
     user: {
       nombre: '',
-      pk: ''
+      id: ''
     }
   };
   return login; 
 }
 
-function checkCredenciales(cuenta, pass, cb) {
+function checkCredenciales(username, pass, cb) {
   var r = { exito: false };
-  var sqlstring = 'SELECT pk, nombre, fkperfil, correo, cuenta, pass FROM usuarios   WHERE (cuenta = $1 OR correo = $1) AND pass = $2 AND  borrado = false';
-  var sqlvalues = [cuenta, pass];
+  var sqlstring = 'SELECT id, nombre, perfil_id, correo, username, pass FROM usuarios   WHERE (username = $1 OR correo = $1) AND pass = $2 AND  borrado = false';
+  var sqlvalues = [username, pass];
   mpg.query(sqlstring, sqlvalues, function (err, result) {
     if (err) {
       r.msg = '' + err;
@@ -35,11 +35,11 @@ function checkCredenciales(cuenta, pass, cb) {
     }
     var row = result.rows[0];
     r.acceso = true;
-    r.pk = row.pk;
+    r.id = row.id;
     r.nombre = row.nombre;
-    r.fkperfil = row.fkperfil;
+    r.perfil_id = row.perfil_id;
     r.correo = row.correo;
-    r.cuenta = row.cuenta;
+    r.username = row.username;
     r.pass = row.pass;
 
     // console.log('checkCredenciales', r);
@@ -47,29 +47,7 @@ function checkCredenciales(cuenta, pass, cb) {
     cb(r);
   });
 }
-function leerPermisos(pkperfil, cb) {
-  var r = { exito: false };
-  var sqlstring = 'SELECT recurso,leer,crear,editar,borrar FROM permisos WHERE fkperfil = $1 AND borrado = false';
-  var sqlvalues = [pkperfil];
-  mpg.query(sqlstring, sqlvalues, function (err, result) {
-    if (err) {
-      r.msg = '' + err;
-      // console.log('leerPermisos', r);
-      cb(r);
-      return;
-    }
-    if (result.rowCount == 0) {
-      r.msg = 'Permisos de perfil ' + pkperfil + ' no encontrados';
-      // console.log('leerPermisos', r);
-      cb(r);
-      return;
-    }
-    r.exito = true;
-    r.permisos = result.rows;
-    // console.log('leerPermisos', r);
-    cb(r);
-  });
-}
+
 
 exports.getSession = function (req, res) {
   res.send(req.session.info_loggin);
@@ -108,11 +86,11 @@ exports.loginRequest = function (req, res) {
     }
 
     req.session.info_loggin = get_infologinDefault();
-    req.session.info_loggin.user.pk = res_check.pk;
+    req.session.info_loggin.user.id = res_check.id;
     req.session.info_loggin.user.nombre = res_check.nombre;
-    req.session.info_loggin.user.fkperfil = res_check.fkperfil;
+    req.session.info_loggin.user.perfil_id = res_check.perfil_id;
     req.session.info_loggin.user.correo = res_check.correo;
-    req.session.info_loggin.user.cuenta = res_check.cuenta;
+    req.session.info_loggin.user.username = res_check.username;
     req.session.info_loggin.user.pass = res_check.pass;
 
     var r = {

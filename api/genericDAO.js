@@ -61,7 +61,7 @@ class GenericDAO {
         var nombreTabla = this.nombreTabla; //Necesario por inexistencia en el contexto promise
         let promise = new Promise((resolve) => { 
             var r = { exito: false };
-            mpg.query('select uuid_generate_v1mc() as pk', null, function(err,result){
+            mpg.query('select uuid_generate_v1mc() as id', null, function(err,result){
                 if(err){
                     r.msg = "" + err;
                     console.log(nombreTabla + '.uuid', r);
@@ -71,7 +71,7 @@ class GenericDAO {
 
                         // Si requiere uuid
                         if (sqlvalues[0] == null) {
-                            sqlvalues[0] = result.rows[0].pk;
+                            sqlvalues[0] = result.rows[0].id;
                         }
                         
                         mpg.query(sqlstring, sqlvalues, function (err, result) {
@@ -87,10 +87,7 @@ class GenericDAO {
                             }
                             else {
                                 r.exito = true;
-                                r.pk = sqlvalues[0];
-                                
-                                if(nombreTabla == "Servicios")
-                                    r.id = sqlvalues[9];
+                                r.id = sqlvalues[0];
                                 
                                 resolve(r);
                             }
